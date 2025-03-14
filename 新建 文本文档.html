@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>修复版图片切换</title>
+    <style>
+        .img-container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+        }
+
+        .img-container img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1s ease;
+            /* 关键修复1：禁止非活跃图片响应点击 */
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .img-container img.active {
+            opacity: 1;
+            /* 关键修复2：确保活跃图片置于顶层 */
+            pointer-events: auto;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="img-container">
+        <!-- 建议使用不同图片测试 -->
+        <img src="image1.jpg" class="active" alt="图片1">
+        <img src="image2.jpg" alt="图片2">
+        <img src="image3.jpg" alt="图片3">
+    </div>
+
+    <script>
+        const images = document.querySelectorAll('img');
+        let currentIndex = 0;
+
+        // 统一为所有图片绑定点击事件
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                // 移除当前图片激活状态
+                images[currentIndex].classList.remove('active');
+                
+                // 关键修复3：正确计算下一张索引
+                currentIndex = (currentIndex + 1) % images.length;
+                
+                // 激活下一张图片
+                images[currentIndex].classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
